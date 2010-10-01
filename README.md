@@ -33,7 +33,10 @@ Use
     % require 'socket'
     % s = TCPSocket.open("192.168.1.100", 20000)
 
-    # send message using Skype API
+    ## use Skype API
+    # call
+    % s.puts "CALL shokaishokai"
+    # send message
     % s.puts "MESSAGE shokaishokai hellowork!!"
 
     # receive
