@@ -40,6 +40,7 @@ Use
     % s.puts "MESSAGE shokaishokai hellowork!!"
 
     # receive
+    % require 'rubygems'
     % require 'json'
     % p JSON.parse s.gets
  
