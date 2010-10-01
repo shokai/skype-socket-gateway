@@ -35,6 +35,5 @@ Use
    % s.puts "MESSAGE shokaishokai hellowork!!"
 
    # receive
-   % puts s.gets
-
-
+   % require 'json'
+   % p JSON.parse s.gets
