@@ -1,7 +1,9 @@
 skype socket gateway
 ====================
-Skype API <-> TCP Socket
+Skype API <---> TCP Socket
 
+* call Skype API via socket
+* response format is json
 
 Dependencies
 ============
