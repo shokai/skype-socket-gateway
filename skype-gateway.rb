@@ -38,7 +38,7 @@ loop do
   Thread.start(s){|s|
     loop do
       begin
-        s.puts chat_msgs.shift.to_json if chat_msgs.size > 0
+        s.puts "\n"+chat_msgs.shift.to_json if chat_msgs.size > 0
       rescue => e
         STDERR.puts e
       end
@@ -63,7 +63,7 @@ loop do
         }
         STDERR.puts e
       end
-      s.puts res.to_json
+      s.puts "\n"+res.to_json
       sleep 1
     end
   }
