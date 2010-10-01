@@ -3,15 +3,16 @@ require "skype"
 require "socket"
 require "json"
 
+APP_NAME = "skype socket gateway"
+PORT = 20000
 
-app_name = "test_app"
-Skype.init app_name
+Skype.init APP_NAME
 Skype.start_messageloop
 Skype.attach_wait
 
-skype = Skype::Application.new(app_name)
+skype = Skype::Application.new(APP_NAME)
 
-sock = TCPServer.open 20000
+sock = TCPServer.open PORT
 p sock.addr
 
 chat_msgs = Array.new
