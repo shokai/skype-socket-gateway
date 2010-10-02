@@ -25,26 +25,42 @@ Skype::ChatMessage.set_notify :status, 'RECEIVED' do |msg|
       :from => msg.get_from.to_s,
       :body => msg.get_body.to_s
     }
-    chat_msgs.push data
+    chat_msgs << data
   rescue => e
     STDERR.puts e
   end
 end
 
+clients = Array.new
+
+# skype chat -> socket
+Thread.new{
+  loop do
+    if chat_msgs.size > 0
+      msg = "\n"+chat_msgs.shift.to_json 
+      errors = Array.new
+      clients.each{|c|
+        begin
+          c.puts msg
+        rescue => e
+          STDERR.puts e
+          errors << c
+        end
+      }
+      errors.each{|c|
+        clients.delete(c)
+        c.close
+      }
+    end
+    sleep 1
+  end
+}
+
+
 loop do
   s = sock.accept
-
-  # skype chat -> socket
-  Thread.start(s){|s|
-    loop do
-      begin
-        s.puts "\n"+chat_msgs.shift.to_json if chat_msgs.size > 0
-      rescue => e
-        STDERR.puts e
-      end
-      sleep 1
-    end
-  }
+  clients << s
+  puts clients.size
 
   # socket -> skype
   Thread.start(s){|s|
@@ -63,7 +79,13 @@ loop do
         }
         STDERR.puts e
       end
-      s.puts "\n"+res.to_json
+      begin
+        s.puts "\n"+res.to_json
+      rescue => e
+        STDERR.puts e
+        c.close
+        break
+      end
       sleep 1
     end
   }
