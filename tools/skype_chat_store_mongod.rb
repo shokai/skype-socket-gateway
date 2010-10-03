@@ -26,8 +26,13 @@ rescue => e
   exit 1
 end
 
-s = TCPSocket.open(conf['host'], conf['port'])
-s.puts "MESSAGE #{conf['me']} skype_chat_store_mongo start"
+begin
+  s = TCPSocket.open(conf['host'], conf['port'])
+  s.puts "MESSAGE #{conf['me']} skype_chat_store_mongo start"
+rescue => e
+  STDERR.puts e
+  exit 1
+end
 
 loop do
   res = s.gets
