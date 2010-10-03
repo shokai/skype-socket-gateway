@@ -42,6 +42,10 @@ loop do
     res['time'] = Time.now.to_i
     db['chat'].insert(res)
     p res
+    if res['body'] =~ /mongo.*count/
+      count = db['chat'].count
+      s.puts "CHATMESSAGE #{res['chat']} #{count}"
+    end
   end
   sleep 0.1
 end
