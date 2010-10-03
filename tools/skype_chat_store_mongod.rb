@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
-# キーワードに反応する単純なbot
+# skype chatをmongo dbに保存する
 
 require 'rubygems'
 require 'socket'
