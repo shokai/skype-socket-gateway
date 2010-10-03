@@ -1,0 +1,11 @@
+*.log
+.bundle
+*~
+.DS_Store
+db/*
+db*
+.fuse*
+*.tch
+config.yaml
+*#*
+*.lock
