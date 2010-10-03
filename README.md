@@ -2,8 +2,9 @@ skype socket gateway
 ====================
 Skype API <---> TCP Socket
 
-* call Skype API via socket
-* response format is json
+* call Skype API via socket.
+* response format is json.
+* forwards all chat messages.
 
 Dependencies
 ============
@@ -28,6 +29,14 @@ Run Skype, then
 
 Use
 ===
+
+    % telnet localhost 20000
+    % > MESSAGE shokaishokai hellohello!!
+
+
+Make skype bot
+==============
+see "samples" directory.
 
     # connect
     % require 'socket'
