@@ -38,17 +38,17 @@ Make skype bot
 ==============
 see "samples" directory.
 
-    # connect
+    ## connect
     % require 'socket'
     % s = TCPSocket.open("192.168.1.100", 20000)
 
     ## use Skype API
-    # call
+    ## call
     % s.puts "CALL shokaishokai"
     # send message
     % s.puts "MESSAGE shokaishokai hellowork!!"
 
-    # receive
+    ## receive
     % require 'rubygems'
     % require 'json'
     % p JSON.parse s.gets
