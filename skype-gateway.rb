@@ -15,6 +15,7 @@ skype = Skype::Application.new(APP_NAME)
 sock = TCPServer.open PORT
 p sock.addr
 
+clients = Array.new
 chat_msgs = Array.new
 
 Skype::ChatMessage.set_notify :status, 'RECEIVED' do |msg|
@@ -31,28 +32,41 @@ Skype::ChatMessage.set_notify :status, 'RECEIVED' do |msg|
   end
 end
 
-clients = Array.new
-
-# skype chat -> socket
-Thread.new{
+# forward all skype chats -> socket
+Thread.new do
   loop do
     if chat_msgs.size > 0
       msg = "\n"+chat_msgs.shift.to_json 
-      errors = Array.new
       clients.each{|c|
         begin
           c.puts msg
         rescue => e
           STDERR.puts e
-          errors << c
         end
       }
-      errors.each{|c|
-        clients.delete(c)
-        c.close
-      }
     end
-    sleep 1
+    sleep 0.1
+  end
+end
+
+# check clients connection
+Thread.new{
+  loop do
+    msg = ''
+    errors = Array.new
+    clients.each{|c|
+      begin
+        c.puts msg
+      rescue => e
+        STDERR.puts e
+        errors << c
+      end
+    }
+    errors.each{|c|
+      clients.delete(c)
+      c.close
+    }
+    sleep 15
   end
 }
 
@@ -62,7 +76,7 @@ loop do
   clients << s
   puts clients.size
 
-  # socket -> skype
+  # socket -> invoke Skype API
   Thread.start(s){|s|
     loop do
         cmd = s.gets
