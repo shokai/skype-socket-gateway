@@ -1,0 +1,10 @@
+# skype setting
+host : "192.168.1.37"
+port : 20000
+me : "your-skype-id"
+
+
+# mongo db setting
+mongo_host : 'localhost'
+mongo_port : 27017
+mongo_dbname : 'skype'
