@@ -9,10 +9,10 @@ $KCODE = 'u'
 HOST = "192.168.1.37"
 PORT = 20000
 
-s = TCPSocket.open(HOST, PORT)
-s.puts "MESSAGE shokaishokai sample/client.rb start"
+  s = TCPSocket.open(HOST, PORT)
+  s.puts "MESSAGE shokaishokai sample/client.rb start"
 
-EventMachine::run do
+Thread.new do
   loop do
     res = s.gets
     exit unless res
@@ -22,8 +22,6 @@ EventMachine::run do
   end
 end
 
-EventMachine::run do
-  loop do
-    s.puts gets
-  end
+loop do
+  s.puts gets
 end
