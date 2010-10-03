@@ -9,8 +9,13 @@ $KCODE = 'u'
 HOST = "192.168.1.37"
 PORT = 20000
 
+begin
   s = TCPSocket.open(HOST, PORT)
   s.puts "MESSAGE shokaishokai sample/client.rb start"
+rescue => e
+  STDERR.puts e
+  exit 1
+end
 
 Thread.new do
   loop do

@@ -16,7 +16,7 @@ begin
   s.puts "MESSAGE shokaishokai ざんまいbot start"
 rescue => e
   STDERR.puts e
-  exit
+  exit 1
 end
 
 EventMachine::run do
