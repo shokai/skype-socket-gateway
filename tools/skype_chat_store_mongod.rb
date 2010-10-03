@@ -29,22 +29,14 @@ end
 s = TCPSocket.open(conf['host'], conf['port'])
 s.puts "MESSAGE #{conf['me']} skype_chat_store_mongo start"
 
-msgs = Array.new
 loop do
-  Thread.start(s){|s|
-    loop do
-      begin
-        res = s.gets
-        exit unless res
-        p res = JSON.parse(res)
-        if res['type'] != 'error' and res['type'] != 'api_response'
-          res['time'] = Time.now.to_i
-          db['chat'].insert(res)
-        end
-      rescue => e
-        STDERR.puts e
-      end
-      sleep 0.1
-    end
-  }
+  res = s.gets
+  exit unless res
+  res = JSON.parse(res) rescue next
+  if res['type'] != 'error' and res['type'] != 'api_response'
+    res['time'] = Time.now.to_i
+    db['chat'].insert(res)
+    p res
+  end
+  sleep 0.1
 end
