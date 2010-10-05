@@ -10,6 +10,7 @@ Dependencies
 ============
 * Ruby4Skype (rubygem)
 * json (rubygem)
+* eventmachine (rubygem)
 * Skype
 
 Ruby4Skype works on Windows, Mac and Linux.
@@ -17,6 +18,7 @@ I'm testing on Windows XP + ActiveRuby 1.8.7.
 
     % gem install Ruby4Skype 
     % gem install json
+    % gem install eventmachine
 
 
 Run
