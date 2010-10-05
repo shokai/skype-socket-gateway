@@ -20,18 +20,27 @@ rescue => e
 end
 
 EventMachine::run do
-  loop do
-    res = s.gets
-    exit unless res
-    res = JSON.parse(res) rescue next
-    p res
-    if res['type'] == 'chat_message' 
-      if res['body'] =~ /ざんまい/ # キーワードに反応
-        s.puts "CHATMESSAGE #{res['chat']} ざんまい行きたい！"
-      elsif res['body'] =~ /かず(すけ|助)/
-        s.puts "CHATMESSAGE #{res['chat']} かずにゃんぺろぺろ"
+  
+  EventMachine::defer do
+    loop do
+      res = s.gets
+      exit unless res
+      res = JSON.parse(res) rescue next
+      p res
+      if res['type'] == 'chat_message' 
+        if res['body'] =~ /ざんまい/ # キーワードに反応
+          s.puts "CHATMESSAGE #{res['chat']} ざんまい行きたい！"
+        elsif res['body'] =~ /かず(すけ|助)/
+          s.puts "CHATMESSAGE #{res['chat']} かずにゃんぺろぺろ"
+        end
       end
     end
-    sleep 0.1
   end
+  
+  EventMachine::defer do
+    loop do
+      s.puts gets
+    end
+  end
+
 end
