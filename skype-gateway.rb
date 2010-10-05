@@ -82,7 +82,7 @@ EventMachine::run do
       EventMachine::defer do
         loop do
           cmd = s.gets
-          next if cmd.to_s.size < 1
+          next if cmd == nil or cmd.to_s.size < 1
           puts "recv => #{cmd}"
           begin
             p res = {
