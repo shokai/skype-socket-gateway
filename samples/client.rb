@@ -17,16 +17,22 @@ rescue => e
   exit 1
 end
 
-Thread.new do
-  loop do
-    res = s.gets
-    exit unless res
-    res = JSON.parse res rescue next
-    p res
-    sleep 0.1
+EventMachine::run do
+
+  EventMachine::defer do
+    loop do
+      res = s.gets
+      exit unless res
+      res = JSON.parse res rescue next
+      p res
+    end
   end
+
+  EventMachine::defer do
+    loop do
+      s.puts gets
+    end
+  end
+
 end
 
-loop do
-  s.puts gets
-end
