@@ -46,8 +46,8 @@ loop do
     elsif res['body'] =~ /mongo find [^ ]+/
       query = res['body'].scan(/mongo find ([^ ]+)/).first.first.to_s
       msgs = db['chat'].find({
-                               #'chat' => res['chat'], # あとで復活させる！！
-                               'body' => /#{query}/
+                               'chat' => res['chat'],
+                               'body' => /#{query}/i
                              }, { :limit => 30 }
                              ).sort(['time', -1])
       msgs.each{|m|
