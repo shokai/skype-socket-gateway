@@ -1,7 +1,8 @@
-require "rubygems"
-require "skype"
-require "socket"
-require "json"
+require 'rubygems'
+require 'skype'
+require 'socket'
+require 'eventmachine'
+require 'json'
 
 APP_NAME = "skype socket gateway"
 PORT = 20000
@@ -33,74 +34,80 @@ Skype::ChatMessage.set_notify :status, 'RECEIVED' do |msg|
 end
 
 # forward all skype chats -> socket
-Thread.new do
-  loop do
-    if chat_msgs.size > 0
-      msg = "\n"+chat_msgs.shift.to_json 
+EventMachine::run do
+  EventMachine::defer do
+    loop do
+      if chat_msgs.size > 0
+        msg = "\n"+chat_msgs.shift.to_json 
+        clients.each{|c|
+          begin
+            c.puts msg
+          rescue => e
+            STDERR.puts e
+          end
+        }
+      end
+    end
+  end
+
+  # check clients connection
+  EventMachine::defer do
+    loop do
+      msg = ''
+      errors = Array.new
       clients.each{|c|
         begin
           c.puts msg
         rescue => e
           STDERR.puts e
+          errors << c
         end
       }
-    end
-    sleep 0.1
-  end
-end
-
-# check clients connection
-Thread.new{
-  loop do
-    msg = ''
-    errors = Array.new
-    clients.each{|c|
-      begin
-        c.puts msg
-      rescue => e
-        STDERR.puts e
-        errors << c
-      end
-    }
-    errors.each{|c|
-      clients.delete(c)
-      c.close
-    }
-    sleep 15
-  end
-}
-
-
-loop do
-  s = sock.accept
-  clients << s
-  puts clients.size
-
-  # socket -> invoke Skype API
-  Thread.start(s){|s|
-    loop do
-        cmd = s.gets
-        puts "recv => #{cmd}"
-      begin
-        p res = {
-          :type => 'api_response',
-          :body => skype.invoke(cmd).to_s
-        }
-      rescue => e
-        res = {
-          :type => 'error',
-          :body => 'skype api invoke error'
-        }
-        STDERR.puts e
-      end
-      begin
-        s.puts "\n"+res.to_json
-      rescue => e
-        STDERR.puts e
+      errors.each{|c|
+        clients.delete(c)
         c.close
-        break
-      end
-      sleep 1
+      }
+    sleep 15
     end
-  }
+  end
+
+  
+  EventMachine::defer do
+    loop do
+      s = sock.accept
+      clients << s
+      puts "--- new client : #{clients.size}"
+      
+      # socket -> invoke Skype API
+      EventMachine::defer do
+        loop do
+          cmd = s.gets
+          puts "recv => #{cmd}"
+          begin
+            p res = {
+              :type => 'api_response',
+              :body => skype.invoke(cmd).to_s
+            }
+          rescue => e
+            res = {
+              :type => 'error',
+              :body => 'skype api invoke error'
+            }
+            STDERR.puts e
+          end
+          begin
+            s.puts "\n"+res.to_json
+          rescue => e
+            STDERR.puts e
+            c.close
+            break
+          end
+        end
+      end
+    end
+  end
+  
 end
+
+
+
