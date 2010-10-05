@@ -42,9 +42,21 @@ loop do
     res['time'] = Time.now.to_i
     db['chat'].insert(res)
     p res
-    if res['body'] =~ /mongo.*count/
+    if res['body'] =~ /mongo count/
       count = db['chat'].count
-      s.puts "CHATMESSAGE #{res['chat']} #{count}"
+      puts mes = "CHATMESSAGE #{res['chat']} #{count}"
+      s.puts mes
+    elsif res['body'] =~ /mongo find [^ ]+/
+      query = res['body'].scan(/mongo find ([^ ]+)/).first.first.to_s
+      msgs = db['chat'].find({
+                               #'chat' => res['chat'], # あとで復活させる！！
+                               'body' => /#{query}/
+                             }, { :limit => 30 }
+                             ).sort(['time', -1])
+      msgs.each{|m|
+        puts mes = "CHATMESSAGE #{res['chat']} (#{m['from']}) : #{m['body']}"
+        s.puts "#{mes}"
+      }
     end
   end
   sleep 0.1
