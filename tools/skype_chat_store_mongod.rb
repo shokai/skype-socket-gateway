@@ -39,9 +39,6 @@ loop do
   exit unless res
   res = JSON.parse(res) rescue next
   if res['type'] != 'error' and res['type'] != 'api_response'
-    res['time'] = Time.now.to_i
-    db['chat'].insert(res)
-    p res
     if res['body'] =~ /mongo count/
       count = db['chat'].count
       puts mes = "CHATMESSAGE #{res['chat']} #{count}"
@@ -57,6 +54,10 @@ loop do
         puts mes = "CHATMESSAGE #{res['chat']} (#{m['from']}) : #{m['body']}"
         s.puts "#{mes}"
       }
+    else
+      res['time'] = Time.now.to_i
+      db['chat'].insert(res)
+      p res
     end
   end
   sleep 0.1
