@@ -44,16 +44,26 @@ loop do
       puts mes = "CHATMESSAGE #{res['chat']} #{count}"
       s.puts mes
     elsif res['body'] =~ /mongo find [^ ]+/
+      limit = 30
       query = res['body'].scan(/mongo find ([^ ]+)/).first.first.to_s
       msgs = db['chat'].find({
                                'chat' => res['chat'],
                                'body' => /#{query}/i
-                             }, { :limit => 30 }
+                             }, { :limit => limit }
                              ).sort(['time', -1])
-      msgs.each{|m|
-        puts mes = "CHATMESSAGE #{res['chat']} (#{m['from']}) : #{m['body']}"
-        s.puts "#{mes}"
-      }
+      if msgs.count > 0
+        msgs.each{|m|
+          puts mes = "CHATMESSAGE #{res['chat']} (#{m['from']}) : #{m['body']}"
+          s.puts mes
+        }
+        if msgs.count > limit
+          puts mes = "CHATMESSAGE #{res['chat']} search : has more (#{msgs.count-limit})"
+          s.puts mes
+        end
+      else
+        puts mes = "CHATMESSAGE #{res['chat']} search : null"
+        s.puts mes
+      end
     else
       res['time'] = Time.now.to_i
       db['chat'].insert(res)
