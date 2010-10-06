@@ -39,7 +39,8 @@ EventMachine::run do
   
   EventMachine::defer do
     loop do
-      s.puts gets
+      mes = gets
+      s.puts mes if mes
     end
   end
 
