@@ -41,6 +41,7 @@ EventMachine::run do
     loop do
       mes = gets
       s.puts mes if mes
+      sleep 0.1
     end
   end
 
