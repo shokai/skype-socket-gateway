@@ -1,3 +1,7 @@
+Deprecated!!
+============
+please use [skype gem](http://github.com/shokai/skype-ruby)
+
 skype socket gateway
 ====================
 Skype API <---> TCP Socket
